@@ -17,6 +17,7 @@ package com.zhihu.matisse.sample;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
@@ -25,6 +26,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +34,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
@@ -121,16 +124,17 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.only_gif:
                 Matisse.from(SampleActivity.this)
                         .choose(MimeType.of(MimeType.GIF), false)
-                        .countable(true)
-                        .maxSelectable(9)
-                        .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
+                        .countable(false)
+                        .theme(R.style.Matisse_Dracula)
+                        .maxSelectable(1)
+//                        .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
                         .gridExpectedSize(
                                 getResources().getDimensionPixelSize(R.dimen.grid_expected_size))
                         .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
                         .thumbnailScale(0.85f)
                         .imageEngine(new GlideEngine())
                         .showSingleMediaType(true)
-                        .originalEnable(true)
+//                        .originalEnable(true)
                         .maxOriginalSize(10)
                         .autoHideToolbarOnSingleTap(true)
                         .forResult(REQUEST_CODE_CHOOSE);
@@ -154,6 +158,7 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
 
         private List<Uri> mUris;
         private List<String> mPaths;
+        private Context mContext;
 
         void setData(List<Uri> uris, List<String> paths) {
             mUris = uris;
@@ -163,6 +168,7 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
 
         @Override
         public UriViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            mContext = parent.getContext();
             return new UriViewHolder(
                     LayoutInflater.from(parent.getContext()).inflate(R.layout.uri_item, parent, false));
         }
@@ -174,6 +180,8 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
 
             holder.mUri.setAlpha(position % 2 == 0 ? 1.0f : 0.54f);
             holder.mPath.setAlpha(position % 2 == 0 ? 1.0f : 0.54f);
+
+            Glide.with(mContext).load(mPaths.get(position)).into(holder.mImageView);
         }
 
         @Override
@@ -185,11 +193,13 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
 
             private TextView mUri;
             private TextView mPath;
+            private ImageView mImageView;
 
             UriViewHolder(View contentView) {
                 super(contentView);
                 mUri = (TextView) contentView.findViewById(R.id.uri);
                 mPath = (TextView) contentView.findViewById(R.id.path);
+                mImageView = contentView.findViewById(R.id.image);
             }
         }
     }
