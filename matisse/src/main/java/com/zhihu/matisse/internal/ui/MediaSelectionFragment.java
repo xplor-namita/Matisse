@@ -84,11 +84,6 @@ public class MediaSelectionFragment extends Fragment implements
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
         Album album = getArguments().getParcelable(EXTRA_ALBUM);
 
         mAdapter = new AlbumMediaAdapter(getContext(),
