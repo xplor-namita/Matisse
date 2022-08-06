@@ -18,16 +18,22 @@ package com.zhihu.matisse.internal.ui;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.viewpager.widget.ViewPager;
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
+import androidx.viewpager.widget.ViewPager;
 
 import com.zhihu.matisse.R;
 import com.zhihu.matisse.internal.entity.IncapableCause;
@@ -39,7 +45,6 @@ import com.zhihu.matisse.internal.ui.widget.CheckRadioView;
 import com.zhihu.matisse.internal.ui.widget.CheckView;
 import com.zhihu.matisse.internal.ui.widget.IncapableDialog;
 import com.zhihu.matisse.internal.utils.PhotoMetadataUtils;
-import com.zhihu.matisse.internal.utils.Platform;
 import com.zhihu.matisse.listener.OnFragmentInteractionListener;
 
 public abstract class BasePreviewActivity extends AppCompatActivity implements View.OnClickListener,
@@ -50,10 +55,12 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
     public static final String EXTRA_RESULT_APPLY = "extra_result_apply";
     public static final String EXTRA_RESULT_ORIGINAL_ENABLE = "extra_result_original_enable";
     public static final String CHECK_STATE = "checkState";
+    private static final int TRANSLATE_DISTANCE = 500;
 
     protected final SelectedItemCollection mSelectedCollection = new SelectedItemCollection(this);
     protected SelectionSpec mSpec;
     protected ViewPager mPager;
+    protected ViewGroup mRootView;
 
     protected PreviewPagerAdapter mAdapter;
 
@@ -71,6 +78,7 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
     private FrameLayout mBottomToolbar;
     private FrameLayout mTopToolbar;
     private boolean mIsToolbarHide = false;
+    private WindowInsetsControllerCompat mWindowInsetsControllerCompat;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -81,10 +89,10 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
             finish();
             return;
         }
-        setContentView(R.layout.activity_media_preview);
-        if (Platform.hasKitKat()) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(Color.TRANSPARENT);
         }
+        setContentView(R.layout.activity_media_preview);
 
         mSpec = SelectionSpec.getInstance();
         if (mSpec.needOrientationRestriction()) {
@@ -112,7 +120,7 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
         mCheckView.setCountable(mSpec.countable);
         mBottomToolbar = findViewById(R.id.bottom_toolbar);
         mTopToolbar = findViewById(R.id.top_toolbar);
-
+        mRootView = findViewById(R.id.root_view);
         mCheckView.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -174,6 +182,17 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
         });
 
         updateApplyButton();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            WindowManager.LayoutParams params = getWindow().getAttributes();
+            params.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+            getWindow().setAttributes(params);
+        }
+        mWindowInsetsControllerCompat = new WindowInsetsControllerCompat(getWindow(), mRootView);
+        mWindowInsetsControllerCompat.setAppearanceLightStatusBars(false);
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+        mWindowInsetsControllerCompat.setSystemBarsBehavior(WindowInsetsControllerCompat
+                .BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
     }
 
     @Override
@@ -206,23 +225,29 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
         }
 
         if (mIsToolbarHide) {
+            mWindowInsetsControllerCompat.show(WindowInsetsCompat.Type.statusBars());
+            mWindowInsetsControllerCompat.show(WindowInsetsCompat.Type.navigationBars());
             mTopToolbar.animate()
                     .setInterpolator(new FastOutSlowInInterpolator())
-                    .translationYBy(mTopToolbar.getMeasuredHeight())
+                    .translationYBy(TRANSLATE_DISTANCE)
                     .start();
             mBottomToolbar.animate()
-                    .translationYBy(-mBottomToolbar.getMeasuredHeight())
+                    .translationYBy(-TRANSLATE_DISTANCE)
                     .setInterpolator(new FastOutSlowInInterpolator())
                     .start();
+
         } else {
+            mWindowInsetsControllerCompat.hide(WindowInsetsCompat.Type.statusBars());
+            mWindowInsetsControllerCompat.hide(WindowInsetsCompat.Type.navigationBars());
             mTopToolbar.animate()
                     .setInterpolator(new FastOutSlowInInterpolator())
-                    .translationYBy(-mTopToolbar.getMeasuredHeight())
+                    .translationYBy(-TRANSLATE_DISTANCE)
                     .start();
             mBottomToolbar.animate()
                     .setInterpolator(new FastOutSlowInInterpolator())
-                    .translationYBy(mBottomToolbar.getMeasuredHeight())
+                    .translationYBy(TRANSLATE_DISTANCE)
                     .start();
+
         }
 
         mIsToolbarHide = !mIsToolbarHide;

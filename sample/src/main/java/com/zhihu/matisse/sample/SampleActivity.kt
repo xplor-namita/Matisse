@@ -39,7 +39,9 @@ import com.zhihu.matisse.filter.Filter
 import com.zhihu.matisse.internal.entity.CaptureStrategy
 
 class SampleActivity : AppCompatActivity(), View.OnClickListener {
+
     private var mAdapter: UriAdapter? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -81,7 +83,7 @@ class SampleActivity : AppCompatActivity(), View.OnClickListener {
             else -> {}
         }
         pickImageLauncher.launch(type)
-        mAdapter!!.setData(null, null)
+        mAdapter?.setData(null, null)
     }
 
     private val pickImageLauncher = registerForActivityResult(PickImageUriContract()) {
@@ -91,7 +93,7 @@ class SampleActivity : AppCompatActivity(), View.OnClickListener {
     }
 
 
-    private inner class PickImageUriContract() :
+    private inner class PickImageUriContract :
         ActivityResultContract<Any, Pair<List<String>, List<Uri>>>() {
         override fun createIntent(context: Context, input: Any?): Intent {
             val intent: Intent?
