@@ -20,16 +20,19 @@ Matisse is a well-designed local image and video selector for Android. You can
 Gradle:
 
 ```groovy
-repositories {
-    jcenter()
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
 }
 
 dependencies {
-    implementation 'com.zhihu.android:matisse:$latest_version'
+    implementation 'com.github.REBOOTERS:Matisse:$latest_version'
 }
 ```
 
-Check out [Matisse releases](https://github.com/zhihu/Matisse/releases) to see more unstable versions.
+Check out [Matisse releases](https://github.com/REBOOTERS/Matisse/releases) to see more unstable versions.
 
 ## ProGuard
 If you use [Glide](https://github.com/bumptech/glide) as your image engine, add rules as Glide's README says.  
@@ -93,6 +96,10 @@ protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     }
 }
 ```
+
+Since onActivityResult method has Deprecated. We also support ActivityResultContract， more details 
+you can find in `SampleActivity`. 
+
 
 #### More
 Find more details about Matisse in [wiki](https://github.com/zhihu/Matisse/wiki).
