@@ -26,6 +26,7 @@
         android:background="@android:color/black" />
 
     <FrameLayout
+        android:fitsSystemWindows="true"
         android:id="@+id/bottom_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -49,8 +50,8 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:fitsSystemWindows="true"
+            android:layout_gravity="center_horizontal"
+            android:fitsSystemWindows="false"
             android:orientation="horizontal">
 
 
@@ -63,6 +64,7 @@
                 android:orientation="horizontal"
                 android:padding="16dp"
                 android:visibility="gone"
+                tools:visibility="visible"
                 tools:showIn="@layout/activity_matisse">
 
 
