@@ -22,11 +22,15 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.net.Uri
+import android.os.Build
+import android.os.Build.VERSION.SDK
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContract
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -48,6 +52,7 @@ class SampleActivity : AppCompatActivity(), View.OnClickListener {
         findViewById<View>(R.id.zhihu).setOnClickListener(this)
         findViewById<View>(R.id.dracula).setOnClickListener(this)
         findViewById<View>(R.id.only_gif).setOnClickListener(this)
+        findViewById<View>(R.id.use_official).setOnClickListener(this)
         val recyclerView = findViewById<View>(R.id.recyclerview) as RecyclerView
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = UriAdapter().also { mAdapter = it }
@@ -56,8 +61,13 @@ class SampleActivity : AppCompatActivity(), View.OnClickListener {
     // <editor-fold defaultstate="collapsed" desc="onClick">
     @SuppressLint("CheckResult")
     override fun onClick(v: View) {
+        val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            listOf(Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VIDEO)
+        } else {
+            listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        }
         PermissionX.init(this)
-            .permissions(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            .permissions(permission)
             .request { allGranted, _, _ ->
                 if (allGranted) {
                     startAction(v)
@@ -80,10 +90,32 @@ class SampleActivity : AppCompatActivity(), View.OnClickListener {
             R.id.zhihu -> type = ZHIHU_THEME
             R.id.dracula -> type = DRACULA_THEME
             R.id.only_gif -> type = ONLY_GIF
+            R.id.use_official -> type = USE_OFFICIAL
             else -> {}
+        }
+        if (type == USE_OFFICIAL) {
+            if (isAndroidS()) {
+                val intent = Intent(MediaStore.ACTION_PICK_IMAGES)
+                intent.putExtra(MediaStore.EXTRA_PICK_IMAGES_MAX, 10)
+                pickOfficialLauncher.launch(intent)
+            } else {
+                val msg = "only supported on Android 13 platform"
+                Toast.makeText(this@SampleActivity, msg, Toast.LENGTH_LONG).show()
+            }
+            return
         }
         pickImageLauncher.launch(type)
         mAdapter?.setData(null, null)
+    }
+
+    private val pickOfficialLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        val resultCode = it.resultCode
+        val data = it.data
+        if (resultCode == Activity.RESULT_OK) {
+            println(data?.data)
+        }
     }
 
     private val pickImageLauncher = registerForActivityResult(PickImageUriContract()) {
@@ -178,10 +210,15 @@ class SampleActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+    private fun isAndroidS(): Boolean {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+    }
+
 
     companion object {
         private const val ZHIHU_THEME = 1
         private const val DRACULA_THEME = ZHIHU_THEME + 1
         private const val ONLY_GIF = DRACULA_THEME + 1
+        private const val USE_OFFICIAL = ONLY_GIF + 1
     }
 }
