@@ -119,7 +119,10 @@ class SampleActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private val pickImageLauncher = registerForActivityResult(PickImageUriContract()) {
-        it?.let {
+        it.let {
+            if (it.first.isEmpty() || it.second.isEmpty()) {
+                return@let
+            }
             mAdapter?.setData(it.second, it.first)
         }
     }
@@ -127,7 +130,7 @@ class SampleActivity : AppCompatActivity(), View.OnClickListener {
 
     private inner class PickImageUriContract :
         ActivityResultContract<Any, Pair<List<String>, List<Uri>>>() {
-        override fun createIntent(context: Context, input: Any?): Intent {
+        override fun createIntent(context: Context, input: Any): Intent {
             val intent: Intent?
             when (input) {
                 DRACULA_THEME -> {
@@ -200,13 +203,13 @@ class SampleActivity : AppCompatActivity(), View.OnClickListener {
             return intent!!
         }
 
-        override fun parseResult(resultCode: Int, intent: Intent?): Pair<List<String>, List<Uri>>? {
+        override fun parseResult(resultCode: Int, intent: Intent?): Pair<List<String>, List<Uri>> {
             if (resultCode == Activity.RESULT_OK) {
                 val paths = Matisse.obtainPathResult(intent)
                 val uris = Matisse.obtainResult(intent)
                 return Pair(paths, uris)
             }
-            return null
+            return Pair(emptyList(), emptyList())
         }
     }
 

@@ -39,6 +39,7 @@ public class MediaGrid extends SquareFrameLayout implements View.OnClickListener
     private Item mMedia;
     private PreBindInfo mPreBindInfo;
     private OnMediaGridClickListener mListener;
+    private int mAvailableWidth = 0;
 
     public MediaGrid(Context context) {
         super(context);
@@ -75,6 +76,8 @@ public class MediaGrid extends SquareFrameLayout implements View.OnClickListener
 
     public void preBindMedia(PreBindInfo info) {
         mPreBindInfo = info;
+        int screenWidth = getContext().getResources().getDisplayMetrics().widthPixels;
+        mAvailableWidth = screenWidth - getContext().getResources().getDimensionPixelSize(R.dimen.media_grid_spacing) * (mPreBindInfo.mSpanCount - 1);
     }
 
     public void bindMedia(Item item) {
@@ -111,8 +114,9 @@ public class MediaGrid extends SquareFrameLayout implements View.OnClickListener
 
     private void setImage() {
         if (mMedia.isGif()) {
-            SelectionSpec.getInstance().imageEngine.loadGifThumbnail(getContext(), mPreBindInfo.mResize,
-                    mPreBindInfo.mPlaceholder, mThumbnail, mMedia.getContentUri());
+//            SelectionSpec.getInstance().imageEngine.loadGifThumbnail(getContext(), mPreBindInfo.mResize,
+//                    mPreBindInfo.mPlaceholder, mThumbnail, mMedia.getContentUri());
+            SelectionSpec.getInstance().imageEngine.loadGifImage(getContext(), mAvailableWidth, mAvailableWidth, mThumbnail, mMedia.getContentUri());
         } else {
             SelectionSpec.getInstance().imageEngine.loadThumbnail(getContext(), mPreBindInfo.mResize,
                     mPreBindInfo.mPlaceholder, mThumbnail, mMedia.getContentUri());
@@ -148,13 +152,15 @@ public class MediaGrid extends SquareFrameLayout implements View.OnClickListener
         Drawable mPlaceholder;
         boolean mCheckViewCountable;
         RecyclerView.ViewHolder mViewHolder;
+        int mSpanCount;
 
         public PreBindInfo(int resize, Drawable placeholder, boolean checkViewCountable,
-                           RecyclerView.ViewHolder viewHolder) {
+                           RecyclerView.ViewHolder viewHolder, int spanCount) {
             mResize = resize;
             mPlaceholder = placeholder;
             mCheckViewCountable = checkViewCountable;
             mViewHolder = viewHolder;
+            mSpanCount = spanCount;
         }
     }
 

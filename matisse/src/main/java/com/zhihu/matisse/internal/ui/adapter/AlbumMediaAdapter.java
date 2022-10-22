@@ -117,7 +117,7 @@ public class AlbumMediaAdapter extends
                     getImageResize(mediaViewHolder.mMediaGrid.getContext()),
                     mPlaceholder,
                     mSelectionSpec.countable,
-                    holder
+                    holder, getSpanCount()
             ));
             mediaViewHolder.mMediaGrid.bindMedia(item);
             mediaViewHolder.mMediaGrid.setOnMediaGridClickListener(this);
@@ -253,8 +253,7 @@ public class AlbumMediaAdapter extends
 
     private int getImageResize(Context context) {
         if (mImageResize == 0) {
-            RecyclerView.LayoutManager lm = mRecyclerView.getLayoutManager();
-            int spanCount = ((GridLayoutManager) lm).getSpanCount();
+            int spanCount = getSpanCount();
             int screenWidth = context.getResources().getDisplayMetrics().widthPixels;
             int availableWidth = screenWidth - context.getResources().getDimensionPixelSize(
                     R.dimen.media_grid_spacing) * (spanCount - 1);
@@ -262,6 +261,14 @@ public class AlbumMediaAdapter extends
             mImageResize = (int) (mImageResize * mSelectionSpec.thumbnailScale);
         }
         return mImageResize;
+    }
+
+    private int getSpanCount() {
+        RecyclerView.LayoutManager lm = mRecyclerView.getLayoutManager();
+        if (lm != null) {
+            return ((GridLayoutManager) lm).getSpanCount();
+        }
+        return 0;
     }
 
     public interface CheckStateListener {
