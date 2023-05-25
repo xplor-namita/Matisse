@@ -42,6 +42,8 @@ import com.zhihu.matisse.engine.impl.PicassoEngine
 import com.zhihu.matisse.filter.Filter
 import com.zhihu.matisse.internal.entity.CaptureStrategy
 
+private const val TAG = "SampleActivity_TAG"
+
 class SampleActivity : AppCompatActivity(), View.OnClickListener {
 
     private var mAdapter: UriAdapter? = null
@@ -53,9 +55,16 @@ class SampleActivity : AppCompatActivity(), View.OnClickListener {
         findViewById<View>(R.id.dracula).setOnClickListener(this)
         findViewById<View>(R.id.only_gif).setOnClickListener(this)
         findViewById<View>(R.id.use_official).setOnClickListener(this)
+        findViewById<View>(R.id.use_official_multi).setOnClickListener(this)
         val recyclerView = findViewById<View>(R.id.recyclerview) as RecyclerView
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = UriAdapter().also { mAdapter = it }
+
+        findViewById<View>(R.id.debug).setOnClickListener {
+            val uri = Uri.parse("content://media/picker/0/com.android.providers.media.photopicker/media/1000033208")
+            val path = AndroidFileUtils.getFilePathByUri(this, uri)
+            Log.d(TAG, "onCreate: $path")
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="onClick">
@@ -66,18 +75,13 @@ class SampleActivity : AppCompatActivity(), View.OnClickListener {
         } else {
             listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         }
-        PermissionX.init(this)
-            .permissions(permission)
-            .request { allGranted, _, _ ->
+        PermissionX.init(this).permissions(permission).request { allGranted, _, _ ->
                 if (allGranted) {
                     startAction(v)
                 } else {
                     Toast.makeText(
-                        this@SampleActivity,
-                        R.string.permission_request_denied,
-                        Toast.LENGTH_LONG
-                    )
-                        .show()
+                        this@SampleActivity, R.string.permission_request_denied, Toast.LENGTH_LONG
+                    ).show()
                 }
             }
     }
@@ -91,13 +95,24 @@ class SampleActivity : AppCompatActivity(), View.OnClickListener {
             R.id.dracula -> type = DRACULA_THEME
             R.id.only_gif -> type = ONLY_GIF
             R.id.use_official -> type = USE_OFFICIAL
+            R.id.use_official_multi -> type = USE_OFFICIAL_MULTI
             else -> {}
         }
+        mAdapter?.setData(null, null)
         if (type == USE_OFFICIAL) {
             if (isAndroidS()) {
                 val intent = Intent(MediaStore.ACTION_PICK_IMAGES)
-                intent.putExtra(MediaStore.EXTRA_PICK_IMAGES_MAX, 10)
                 pickOfficialLauncher.launch(intent)
+            } else {
+                val msg = "only supported on Android 13 platform"
+                Toast.makeText(this@SampleActivity, msg, Toast.LENGTH_LONG).show()
+            }
+            return
+        } else if (type == USE_OFFICIAL_MULTI) {
+            if (isAndroidS()) {
+                val intent = Intent(MediaStore.ACTION_PICK_IMAGES)
+                intent.putExtra(MediaStore.EXTRA_PICK_IMAGES_MAX, 10)
+                pickOfficialMultiLauncher.launch(intent)
             } else {
                 val msg = "only supported on Android 13 platform"
                 Toast.makeText(this@SampleActivity, msg, Toast.LENGTH_LONG).show()
@@ -105,7 +120,7 @@ class SampleActivity : AppCompatActivity(), View.OnClickListener {
             return
         }
         pickImageLauncher.launch(type)
-        mAdapter?.setData(null, null)
+
     }
 
     private val pickOfficialLauncher = registerForActivityResult(
@@ -114,7 +129,38 @@ class SampleActivity : AppCompatActivity(), View.OnClickListener {
         val resultCode = it.resultCode
         val data = it.data
         if (resultCode == Activity.RESULT_OK) {
-            println(data?.data)
+            val uri = data?.data
+            val path = AndroidFileUtils.getFilePathByUri(this, uri)
+            val pathList = arrayOf(path).toList()
+            Log.e(TAG, "uri:  $uri")
+            Log.e(TAG, "path: $path")
+            val uriList = arrayOf(uri).toList()
+            mAdapter?.setData(uriList, pathList)
+        }
+    }
+
+    private val pickOfficialMultiLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        val resultCode = it.resultCode
+        val data = it.data
+        if (resultCode == Activity.RESULT_OK) {
+            Log.e(TAG, ": ${data?.clipData}")
+
+            data?.clipData?.let {
+                Log.e(TAG, "clipData $it")
+                val uriList = ArrayList<Uri>()
+                val pathList = ArrayList<String>()
+                for (i in 0 until it.itemCount) {
+                    Log.e(TAG, ": ${it.getItemAt(i)}")
+                    val uri = it.getItemAt(i).uri
+                    val path = AndroidFileUtils.getFilePathByUri(this, uri) ?: ""
+                    Log.e(TAG, ": $path")
+                    uriList.add(uri)
+                    pathList.add(path)
+                }
+                mAdapter?.setData(uriList, pathList)
+            }
         }
     }
 
@@ -128,76 +174,47 @@ class SampleActivity : AppCompatActivity(), View.OnClickListener {
     }
 
 
-    private inner class PickImageUriContract :
-        ActivityResultContract<Any, Pair<List<String>, List<Uri>>>() {
+    private inner class PickImageUriContract : ActivityResultContract<Any, Pair<List<String>, List<Uri>>>() {
         override fun createIntent(context: Context, input: Any): Intent {
             val intent: Intent?
             when (input) {
                 DRACULA_THEME -> {
-                    intent = Matisse.from(this@SampleActivity)
-                        .choose(MimeType.ofImage())
-                        .theme(R.style.Matisse_Dracula)
-                        .countable(false)
-                        .addFilter(GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
-                        .maxSelectable(9)
-                        .originalEnable(true)
-                        .maxOriginalSize(10)
-                        .imageEngine(PicassoEngine())
-                        .createIntent()
+                    intent = Matisse.from(this@SampleActivity).choose(MimeType.ofImage()).theme(R.style.Matisse_Dracula)
+                        .countable(false).addFilter(GifSizeFilter(320, 320, 5 * Filter.K * Filter.K)).maxSelectable(9)
+                        .originalEnable(true).maxOriginalSize(10).imageEngine(PicassoEngine()).createIntent()
 
                 }
+
                 ONLY_GIF -> {
-                    intent = Matisse.from(this@SampleActivity)
-                        .choose(MimeType.of(MimeType.GIF), false)
-                        .countable(false)
-                        .theme(R.style.Matisse_Dracula)
-                        .maxSelectable(1) //
+                    intent = Matisse.from(this@SampleActivity).choose(MimeType.of(MimeType.GIF), false).countable(false)
+                        .theme(R.style.Matisse_Dracula).maxSelectable(1) //
                         // .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
                         .gridExpectedSize(
                             resources.getDimensionPixelSize(R.dimen.grid_expected_size)
-                        )
-                        .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
-                        .thumbnailScale(0.85f)
-                        .imageEngine(GlideEngine())
-                        .showSingleMediaType(true) //
+                        ).restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT).thumbnailScale(0.85f)
+                        .imageEngine(GlideEngine()).showSingleMediaType(true) //
                         // .originalEnable(true)
-                        .maxOriginalSize(10)
-                        .autoHideToolbarOnSingleTap(true)
-                        .createIntent()
+                        .maxOriginalSize(10).autoHideToolbarOnSingleTap(true).createIntent()
                 }
+
                 else -> {
-                    intent = Matisse.from(this@SampleActivity)
-                        .choose(MimeType.ofImage(), false)
-                        .countable(true)
-                        .capture(true)
-                        .captureStrategy(
+                    intent = Matisse.from(this@SampleActivity).choose(MimeType.ofImage(), false).countable(true)
+                        .capture(true).captureStrategy(
                             CaptureStrategy(true, "com.zhihu.matisse.sample.fileprovider", "test")
-                        )
-                        .maxSelectable(9)
-                        .addFilter(GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
-                        .gridExpectedSize(
+                        ).maxSelectable(9).addFilter(GifSizeFilter(320, 320, 5 * Filter.K * Filter.K)).gridExpectedSize(
                             resources.getDimensionPixelSize(R.dimen.grid_expected_size)
-                        )
-                        .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
-                        .thumbnailScale(0.85f)
+                        ).restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT).thumbnailScale(0.85f)
                         .imageEngine(GlideEngine())
                         .setOnSelectedListener { uriList: List<Uri?>?, pathList: List<String?> ->
                             Log.e(
-                                "onSelected",
-                                "onSelected: pathList=$pathList"
+                                "onSelected", "onSelected: pathList=$pathList"
                             )
-                        }
-                        .showSingleMediaType(true)
-                        .originalEnable(true)
-                        .maxOriginalSize(10)
-                        .autoHideToolbarOnSingleTap(true)
-                        .setOnCheckedListener { isChecked: Boolean ->
+                        }.showSingleMediaType(true).originalEnable(true).maxOriginalSize(10)
+                        .autoHideToolbarOnSingleTap(true).setOnCheckedListener { isChecked: Boolean ->
                             Log.e(
-                                "isChecked",
-                                "onCheck: isChecked=$isChecked"
+                                "isChecked", "onCheck: isChecked=$isChecked"
                             )
-                        }
-                        .createIntent()
+                        }.createIntent()
                 }
             }
             return intent!!
@@ -223,5 +240,6 @@ class SampleActivity : AppCompatActivity(), View.OnClickListener {
         private const val DRACULA_THEME = ZHIHU_THEME + 1
         private const val ONLY_GIF = DRACULA_THEME + 1
         private const val USE_OFFICIAL = ONLY_GIF + 1
+        private const val USE_OFFICIAL_MULTI = USE_OFFICIAL + 1
     }
 }

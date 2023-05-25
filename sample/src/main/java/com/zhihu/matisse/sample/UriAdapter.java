@@ -41,7 +41,7 @@ public class UriAdapter extends RecyclerView.Adapter<UriAdapter.UriViewHolder> {
         holder.mUri.setAlpha(position % 2 == 0 ? 1.0f : 0.54f);
         holder.mPath.setAlpha(position % 2 == 0 ? 1.0f : 0.54f);
 
-        Glide.with(mContext).load(mPaths.get(position)).into(holder.mImageView);
+        Glide.with(mContext).load(mUris.get(position)).into(holder.mImageView);
     }
 
     @Override

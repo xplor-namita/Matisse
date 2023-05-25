@@ -14,10 +14,10 @@
   limitations under the License.
   -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@android:color/white"
     android:orientation="vertical"
     tools:ignore="HardcodedText">
@@ -25,8 +25,21 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:elevation="4dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        app:elevation="4dp">
+
+        <Button
+            android:id="@+id/debug"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/item_margin_horizontal"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="@dimen/item_margin_horizontal"
+            android:minHeight="56dp"
+            android:text="debug"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:theme="@style/ZhihuOverlay" />
 
         <Button
             android:id="@+id/zhihu"
@@ -61,7 +74,6 @@
             android:layout_marginLeft="@dimen/item_margin_horizontal"
             android:layout_marginTop="16dp"
             android:layout_marginRight="@dimen/item_margin_horizontal"
-
             android:minHeight="56dp"
             android:text="OnlyGif"
             android:textAllCaps="false"
@@ -75,9 +87,21 @@
             android:layout_marginLeft="@dimen/item_margin_horizontal"
             android:layout_marginTop="16dp"
             android:layout_marginRight="@dimen/item_margin_horizontal"
+            android:text="use_official"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:theme="@style/DraculaOverlay" />
+
+        <Button
+            android:id="@+id/use_official_multi"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/item_margin_horizontal"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="@dimen/item_margin_horizontal"
             android:layout_marginBottom="32dp"
             android:minHeight="56dp"
-            android:text="use_official"
+            android:text="use_official_multi_select"
             android:textAllCaps="false"
             android:textColor="@android:color/white"
             android:theme="@style/DraculaOverlay" />
@@ -86,11 +110,11 @@
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:gravity="center_vertical"
+            android:paddingStart="@dimen/item_margin_horizontal"
             android:paddingLeft="@dimen/item_margin_horizontal"
             android:text="@string/app_name"
             android:textColor="@android:color/black"
-            android:textSize="22sp"
-            android:paddingStart="@dimen/item_margin_horizontal" />
+            android:textSize="22sp" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
