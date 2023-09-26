@@ -22,20 +22,16 @@
     android:orientation="vertical"
     tools:ignore="HardcodedText">
 
-    <LinearLayout
+    <com.google.android.flexbox.FlexboxLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:elevation="4dp">
+        app:flexWrap="wrap">
 
         <Button
             android:id="@+id/zhihu"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/item_margin_horizontal"
-            android:layout_marginTop="8dp"
-            android:layout_marginRight="@dimen/item_margin_horizontal"
-            android:minHeight="56dp"
+            android:layout_margin="5dp"
             android:text="Zhihu"
             android:textAllCaps="false"
             android:textColor="@android:color/white"
@@ -43,25 +39,29 @@
 
         <Button
             android:id="@+id/dracula"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/item_margin_horizontal"
-            android:layout_marginTop="16dp"
-            android:layout_marginRight="@dimen/item_margin_horizontal"
-            android:minHeight="56dp"
+            android:layout_margin="5dp"
             android:text="Dracula"
             android:textAllCaps="false"
             android:textColor="@android:color/white"
             android:theme="@style/DraculaOverlay" />
 
         <Button
-            android:id="@+id/only_gif"
-            android:layout_width="match_parent"
+            android:id="@+id/material_design_3"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/item_margin_horizontal"
-            android:layout_marginTop="16dp"
-            android:layout_marginRight="@dimen/item_margin_horizontal"
-            android:minHeight="56dp"
+            android:layout_margin="5dp"
+            android:text="material_design_3"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:theme="@style/DraculaOverlay" />
+
+        <Button
+            android:id="@+id/only_gif"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
             android:text="OnlyGif"
             android:textAllCaps="false"
             android:textColor="@android:color/white"
@@ -69,11 +69,9 @@
 
         <Button
             android:id="@+id/use_official"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/item_margin_horizontal"
-            android:layout_marginTop="16dp"
-            android:layout_marginRight="@dimen/item_margin_horizontal"
+            android:layout_margin="5dp"
             android:text="use_official"
             android:textAllCaps="false"
             android:textColor="@android:color/white"
@@ -81,13 +79,9 @@
 
         <Button
             android:id="@+id/use_official_multi"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/item_margin_horizontal"
-            android:layout_marginTop="16dp"
-            android:layout_marginRight="@dimen/item_margin_horizontal"
-            android:layout_marginBottom="32dp"
-            android:minHeight="56dp"
+            android:layout_margin="5dp"
             android:text="use_official_multi_select"
             android:textAllCaps="false"
             android:textColor="@android:color/white"
@@ -102,7 +96,8 @@
             android:text="@string/app_name"
             android:textColor="@android:color/black"
             android:textSize="22sp" />
-    </LinearLayout>
+    </com.google.android.flexbox.FlexboxLayout>
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview"

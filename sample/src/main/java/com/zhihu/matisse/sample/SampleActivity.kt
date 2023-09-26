@@ -53,6 +53,7 @@ class SampleActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(R.layout.activity_main)
         findViewById<View>(R.id.zhihu).setOnClickListener(this)
         findViewById<View>(R.id.dracula).setOnClickListener(this)
+        findViewById<View>(R.id.material_design_3).setOnClickListener(this)
         findViewById<View>(R.id.only_gif).setOnClickListener(this)
         findViewById<View>(R.id.use_official).setOnClickListener(this)
         findViewById<View>(R.id.use_official_multi).setOnClickListener(this)
@@ -87,6 +88,7 @@ class SampleActivity : AppCompatActivity(), View.OnClickListener {
         when (v.id) {
             R.id.zhihu -> type = ZHIHU_THEME
             R.id.dracula -> type = DRACULA_THEME
+            R.id.material_design_3 -> type = MATERIAL_DESIGN_3_THEME
             R.id.only_gif -> type = ONLY_GIF
             R.id.use_official -> type = USE_OFFICIAL
             R.id.use_official_multi -> type = USE_OFFICIAL_MULTI
@@ -183,6 +185,14 @@ class SampleActivity : AppCompatActivity(), View.OnClickListener {
 
                 }
 
+                MATERIAL_DESIGN_3_THEME -> {
+                    intent = Matisse.from(this@SampleActivity).choose(MimeType.ofImage()).theme(R.style.Matisse_M3)
+                        .countable(false).addFilter(GifSizeFilter(320, 320, 5 * Filter.K * Filter.K)).maxSelectable(9)
+                        .autoHideToolbarOnSingleTap(true)
+                        .originalEnable(true).maxOriginalSize(10).imageEngine(PicassoEngine()).createIntent()
+
+                }
+
                 ONLY_GIF -> {
                     intent =
                         Matisse.from(this@SampleActivity).choose(MimeType.of(MimeType.GIF), false)
@@ -241,7 +251,8 @@ class SampleActivity : AppCompatActivity(), View.OnClickListener {
     companion object {
         private const val ZHIHU_THEME = 1
         private const val DRACULA_THEME = ZHIHU_THEME + 1
-        private const val ONLY_GIF = DRACULA_THEME + 1
+        private const val MATERIAL_DESIGN_3_THEME = DRACULA_THEME + 1
+        private const val ONLY_GIF = MATERIAL_DESIGN_3_THEME + 1
         private const val USE_OFFICIAL = ONLY_GIF + 1
         private const val USE_OFFICIAL_MULTI = USE_OFFICIAL + 1
     }
