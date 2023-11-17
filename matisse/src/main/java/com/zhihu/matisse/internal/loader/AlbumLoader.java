@@ -24,6 +24,7 @@ import android.database.MergeCursor;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
+import android.util.Log;
 
 import androidx.loader.content.CursorLoader;
 
@@ -66,7 +67,8 @@ public class AlbumLoader extends CursorLoader {
             MediaStore.Files.FileColumns._ID,
             COLUMN_BUCKET_ID,
             COLUMN_BUCKET_DISPLAY_NAME,
-            MediaStore.MediaColumns.MIME_TYPE};
+            MediaStore.MediaColumns.MIME_TYPE,
+            MediaStore.MediaColumns.IS_FAVORITE};
 
     // === params for showSingleMediaType: false ===
     private static final String SELECTION =
@@ -175,7 +177,7 @@ public class AlbumLoader extends CursorLoader {
                             albums.getColumnIndex(MediaStore.MediaColumns.MIME_TYPE));
                     Uri uri = getUri(albums);
                     int count = albums.getInt(albums.getColumnIndex(COLUMN_COUNT));
-
+                    Log.e("zzzz", "name = " + bucketDisplayName + ",count = " + count);
                     otherAlbums.addRow(new String[]{
                             Long.toString(fileId),
                             Long.toString(bucketId), bucketDisplayName, mimeType, uri.toString(),
@@ -235,6 +237,13 @@ public class AlbumLoader extends CursorLoader {
                                 albums.getColumnIndex(MediaStore.MediaColumns.MIME_TYPE));
                         Uri uri = getUri(albums);
                         long count = countMap.get(bucketId);
+                        String fav = "";
+                        int favIndex = albums.getColumnIndex(MediaStore.MediaColumns.IS_FAVORITE);
+                        if (favIndex > 0) {
+                             fav = albums.getString(favIndex);
+                        }
+                        Log.e("zzzz", "name = " + bucketDisplayName +
+                                ",count = " + count + ",mimeType " + mimeType + ",fav = " + fav);
 
                         otherAlbums.addRow(new String[]{
                                 Long.toString(fileId),
