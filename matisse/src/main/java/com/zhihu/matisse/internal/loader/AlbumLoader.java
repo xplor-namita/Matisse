@@ -118,7 +118,7 @@ public class AlbumLoader extends CursorLoader {
     }
     // =============================================
 
-    private static final String BUCKET_ORDER_BY = "datetaken DESC";
+    private static final String BUCKET_ORDER_BY = MediaStore.Images.Media.DATE_ADDED + " DESC";
 
     private AlbumLoader(Context context, String selection, String[] selectionArgs) {
         super(

@@ -2,6 +2,14 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
+    signingConfigs {
+        debug {
+            storeFile file('sample')
+            storePassword '123456'
+            keyAlias 'sample'
+            keyPassword '123456'
+        }
+    }
     compileSdk 34
 
     defaultConfig {
@@ -10,6 +18,9 @@ android {
         targetSdkVersion 34
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
+        // just avoid uninstall app when launch app on different machine
+        signingConfig signingConfigs.debug
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
@@ -36,6 +47,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "com.google.android.material:material:1.10.0"
     implementation 'com.google.android.flexbox:flexbox:3.0.0'
+    implementation "androidx.multidex:multidex:2.0.1"
 
 }
 repositories {
