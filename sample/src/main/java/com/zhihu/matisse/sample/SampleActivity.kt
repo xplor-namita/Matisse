@@ -87,6 +87,7 @@ class SampleActivity : AppCompatActivity(), View.OnClickListener {
         }
         PermissionX.init(this).permissions(permission).request { allGranted, _, _ ->
             if (allGranted) {
+                ImageLabelHelper.init(this)
                 startAction(v)
             } else {
                 Toast.makeText(
