@@ -1,8 +1,8 @@
 apply plugin: 'maven-publish'
 
-def GROUP_ID = "com.zhihu.android"
-def ARTIFACT_ID = "matisse"
-def VERSION = "v0.5.7"
+def GROUP_ID = "com.engineer.ai"
+def ARTIFACT_ID = "image-label"
+def VERSION = "v0.0.1"
 
 
 // 1. 增加上传源码的task
