@@ -87,7 +87,7 @@ class SampleActivity : AppCompatActivity(), View.OnClickListener {
         }
         PermissionX.init(this).permissions(permission).request { allGranted, _, _ ->
             if (allGranted) {
-                ImageLabelHelper.init(this)
+//                ImageLabelHelper.init(this)
                 startAction(v)
             } else {
                 Toast.makeText(
@@ -192,7 +192,7 @@ class SampleActivity : AppCompatActivity(), View.OnClickListener {
             val intent: Intent?
             when (input) {
                 DRACULA_THEME -> {
-                    intent = Matisse.from(this@SampleActivity).choose(MimeType.ofStaticImage()).theme(R.style.Matisse_Dracula)
+                    intent = Matisse.from(this@SampleActivity).choose(MimeType.ofImage()).theme(R.style.Matisse_Dracula)
                         .countable(false).restrictOrientation(currentOrientation)
                         .addFilter(GifSizeFilter(320, 320, 5 * Filter.K * Filter.K)).maxSelectable(9)
                         .originalEnable(true).maxOriginalSize(10).imageEngine(PicassoEngine()).createIntent()
