@@ -40,7 +40,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
-import com.engineer.ai.util.ImageLabelHelper;
 import com.zhihu.matisse.R;
 import com.zhihu.matisse.internal.entity.Album;
 import com.zhihu.matisse.internal.entity.Item;
@@ -61,7 +60,6 @@ import com.zhihu.matisse.internal.utils.MediaStoreCompat;
 import com.zhihu.matisse.internal.utils.PathUtils;
 import com.zhihu.matisse.internal.utils.PhotoMetadataUtils;
 import com.zhihu.matisse.internal.utils.SingleMediaScanner;
-import com.zhihu.matisse.ui.labels.LabelCategoryActivity;
 
 import java.util.ArrayList;
 
@@ -337,8 +335,6 @@ public class MatisseActivity extends AppCompatActivity implements AlbumCollectio
             if (mSpec.onCheckedListener != null) {
                 mSpec.onCheckedListener.onCheck(mOriginalEnable);
             }
-        } else if (v.getId() == R.id.label_entrance) {
-            startActivity(new Intent(v.getContext(), LabelCategoryActivity.class));
         }
     }
 
@@ -398,14 +394,6 @@ public class MatisseActivity extends AppCompatActivity implements AlbumCollectio
                 }
             });
             getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment, MediaSelectionFragment.class.getSimpleName()).commitAllowingStateLoss();
-            ImageLabelHelper.INSTANCE.addLabelReadyListener(() -> {
-                if (isFinishing()) {
-                    return;
-                }
-                if (!ImageLabelHelper.INSTANCE.getLabelList().isEmpty()) {
-                    labelEntrance.post(() -> labelEntrance.setVisibility(View.VISIBLE));
-                }
-            });
         }
     }
 

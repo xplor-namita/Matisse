@@ -16,12 +16,9 @@
  */
 package com.zhihu.matisse.internal.model;
 
-import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,16 +26,10 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
 
-import com.engineer.ai.util.ImageLabelHelper;
-import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.internal.entity.Album;
 import com.zhihu.matisse.internal.loader.AlbumMediaLoader;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-
-import kotlin.Unit;
-import kotlin.jvm.functions.Function0;
 
 public class AlbumMediaCollection implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final String ARGS_ALBUM = "args_album";

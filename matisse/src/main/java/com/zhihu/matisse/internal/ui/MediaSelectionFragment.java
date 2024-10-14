@@ -21,18 +21,17 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.engineer.ai.util.ImageLabelHelper;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.R;
 import com.zhihu.matisse.internal.entity.Album;
@@ -46,11 +45,7 @@ import com.zhihu.matisse.internal.utils.UIUtils;
 
 import java.util.ArrayList;
 
-import kotlin.Unit;
-
-public class MediaSelectionFragment extends Fragment implements
-        AlbumMediaCollection.AlbumMediaCallbacks, AlbumMediaAdapter.CheckStateListener,
-        AlbumMediaAdapter.OnMediaClickListener {
+public class MediaSelectionFragment extends Fragment implements AlbumMediaCollection.AlbumMediaCallbacks, AlbumMediaAdapter.CheckStateListener, AlbumMediaAdapter.OnMediaClickListener {
 
     public static final String EXTRA_ALBUM = "extra_album";
 
@@ -89,8 +84,7 @@ public class MediaSelectionFragment extends Fragment implements
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_media_selection, container, false);
     }
 
@@ -100,8 +94,7 @@ public class MediaSelectionFragment extends Fragment implements
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
         Album album = getArguments().getParcelable(EXTRA_ALBUM);
 
-        mAdapter = new AlbumMediaAdapter(getContext(),
-                mSelectionProvider.provideSelectedItemCollection(), mRecyclerView);
+        mAdapter = new AlbumMediaAdapter(getContext(), mSelectionProvider.provideSelectedItemCollection(), mRecyclerView);
         mAdapter.registerCheckStateListener(this);
         mAdapter.registerOnMediaClickListener(this);
         mRecyclerView.setHasFixedSize(true);
@@ -143,7 +136,7 @@ public class MediaSelectionFragment extends Fragment implements
     }
 
     public void triggerImageLabelProcess(Cursor cursor) {
-        Log.i("trigger","triggerImageLabelProcess");
+        Log.i("trigger", "triggerImageLabelProcess");
         Cursor copy = cursor;
         ArrayList<Uri> uriList = new ArrayList<>();
         if (copy.moveToFirst()) {
@@ -154,13 +147,6 @@ public class MediaSelectionFragment extends Fragment implements
 
             } while (copy.moveToNext());
         }
-        ImageLabelHelper.INSTANCE.getLabel(getContext(), uriList, () -> {
-            if (mLabelLoadCallback != null) {
-                mLabelLoadCallback.onLabelLoad();
-            }
-            return Unit.INSTANCE;
-        });
-
     }
 
     @Override
@@ -179,8 +165,7 @@ public class MediaSelectionFragment extends Fragment implements
     @Override
     public void onMediaClick(Album album, Item item, int adapterPosition) {
         if (mOnMediaClickListener != null) {
-            mOnMediaClickListener.onMediaClick((Album) getArguments().getParcelable(EXTRA_ALBUM),
-                    item, adapterPosition);
+            mOnMediaClickListener.onMediaClick((Album) getArguments().getParcelable(EXTRA_ALBUM), item, adapterPosition);
         }
     }
 
@@ -195,8 +180,7 @@ public class MediaSelectionFragment extends Fragment implements
     @SuppressLint("Range")
     private static Uri getUri(Cursor cursor) {
         long id = cursor.getLong(cursor.getColumnIndex(MediaStore.Files.FileColumns._ID));
-        String mimeType = cursor.getString(
-                cursor.getColumnIndex(MediaStore.MediaColumns.MIME_TYPE));
+        String mimeType = cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.MIME_TYPE));
         Uri contentUri;
 
         if (MimeType.isImage(mimeType)) {
