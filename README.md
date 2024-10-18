@@ -1,7 +1,7 @@
 ![Image](/image/banner.png)
 
 # Matisse
-[![Build Status](https://travis-ci.org/zhihu/Matisse.svg)](https://travis-ci.org/zhihu/Matisse) [![](https://jitpack.io/v/REBOOTERS/Matisse.svg)](https://jitpack.io/#REBOOTERS/Matisse)
+[![Android CI](https://github.com/REBOOTERS/Matisse/actions/workflows/android.yml/badge.svg)](https://github.com/REBOOTERS/Matisse/actions/workflows/android.yml) [![](https://jitpack.io/v/REBOOTERS/Matisse.svg)](https://jitpack.io/#REBOOTERS/Matisse)
 
 
 Matisse is a well-designed local image and video selector for Android. You can  
