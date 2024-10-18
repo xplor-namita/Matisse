@@ -112,8 +112,23 @@ public class AlbumLoader extends CursorLoader {
                     + " AND " + MediaStore.MediaColumns.SIZE + ">0"
                     + " AND " + MediaStore.MediaColumns.MIME_TYPE + "=?";
 
+    // === params for showSingleMediaType: true ===
+    private static final String SELECTION_FOR_SINGLE_MEDIA_NO_GIF_TYPE =
+            MediaStore.Files.FileColumns.MEDIA_TYPE + "=?"
+                    + " AND " + MediaStore.MediaColumns.SIZE + ">0"
+                    + " AND " + MediaStore.MediaColumns.MIME_TYPE + " IN (?,?,?,?) "
+                    + ") GROUP BY (bucket_id";
+    private static final String SELECTION_FOR_SINGLE_MEDIA_NO_GIF_TYPE_29 =
+            MediaStore.Files.FileColumns.MEDIA_TYPE + "=?"
+                    + " AND " + MediaStore.MediaColumns.SIZE + ">0"
+                    + " AND " + MediaStore.MediaColumns.MIME_TYPE + " IN (?,?,?,?) ";
+
     private static String[] getSelectionArgsForSingleMediaGifType(int mediaType) {
         return new String[]{String.valueOf(mediaType), "image/gif"};
+    }
+
+    private static String[] getSelectionArgsForSingleMediaNoGifType(int mediaType) {
+        return new String[]{String.valueOf(mediaType),"image/png", "image/jpeg", "image/x-ms-bmp", "image/webp"};
     }
     // =============================================
 
@@ -138,6 +153,10 @@ public class AlbumLoader extends CursorLoader {
                     ? SELECTION_FOR_SINGLE_MEDIA_GIF_TYPE : SELECTION_FOR_SINGLE_MEDIA_GIF_TYPE_29;
             selectionArgs = getSelectionArgsForSingleMediaGifType(
                     MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE);
+        } else if (SelectionSpec.getInstance().onlyShowStaticImages()) {
+            selection = beforeAndroidTen()
+                    ? SELECTION_FOR_SINGLE_MEDIA_NO_GIF_TYPE : SELECTION_FOR_SINGLE_MEDIA_NO_GIF_TYPE_29;
+            selectionArgs = getSelectionArgsForSingleMediaNoGifType(MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE);
         } else if (SelectionSpec.getInstance().onlyShowImages()) {
             selection = beforeAndroidTen()
                     ? SELECTION_FOR_SINGLE_MEDIA_TYPE : SELECTION_FOR_SINGLE_MEDIA_TYPE_29;
@@ -176,7 +195,7 @@ public class AlbumLoader extends CursorLoader {
                             albums.getColumnIndex(MediaStore.MediaColumns.MIME_TYPE));
                     Uri uri = getUri(albums);
                     int count = albums.getInt(albums.getColumnIndex(COLUMN_COUNT));
-                    Log.e("zzzz", "name = " + bucketDisplayName + ",count = " + count);
+                    Log.e("zzzz", "name1 = " + bucketDisplayName + ",count = " + count);
                     otherAlbums.addRow(new String[]{
                             Long.toString(fileId),
                             Long.toString(bucketId), bucketDisplayName, mimeType, uri.toString(),
@@ -236,7 +255,7 @@ public class AlbumLoader extends CursorLoader {
                                 albums.getColumnIndex(MediaStore.MediaColumns.MIME_TYPE));
                         Uri uri = getUri(albums);
                         long count = countMap.get(bucketId);
-                        Log.e("zzzz", "name = " + bucketDisplayName +
+                        Log.e("zzzz", "name2 = " + bucketDisplayName +
                                 ",count = " + count + ",mimeType " + mimeType);
 
                         otherAlbums.addRow(new String[]{
