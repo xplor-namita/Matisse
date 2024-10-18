@@ -8,24 +8,24 @@ import android.provider.MediaStore
 object LoaderHelper {
 
     @JvmStatic
-    fun getSelection(): String {
-        val holder = loadNoAnimImagesHolder()
+    fun getSelection(albumId: String?): String {
+        val holder = loadNoAnimImagesHolder(albumId)
         return holder.first
     }
 
     @JvmStatic
-    fun getSelectionArgs(): Array<String> {
-        val holder = loadNoAnimImagesHolder()
+    fun getSelectionArgs(albumId: String?): Array<String> {
+        val holder = loadNoAnimImagesHolder(albumId)
         return holder.second
     }
 
     @JvmStatic
-    private fun loadNoAnimImagesHolder(): Pair<String, Array<String>> {
-        return buildSelectionAndArgs(listOf("image/png", "image/jpeg", "image/x-ms-bmp", "image/webp"))
+    private fun loadNoAnimImagesHolder(albumId: String?): Pair<String, Array<String>> {
+        return buildSelectionAndArgs(listOf("image/png", "image/jpeg", "image/x-ms-bmp", "image/webp"), albumId)
     }
 
-    private fun buildSelectionAndArgs(mimeTypes: List<String>): Pair<String, Array<String>> {
-        val selection: String
+    private fun buildSelectionAndArgs(mimeTypes: List<String>, albumId: String?): Pair<String, Array<String>> {
+        var selection: String
         val selectionArgs: Array<String>
 
         if (mimeTypes.isEmpty()) {
@@ -37,8 +37,17 @@ object LoaderHelper {
             val placeholders = mimeTypes.joinToString(", ") { "?" }
             selection =
                 MediaStore.Images.Media.MIME_TYPE + " IN ($placeholders)" + " AND " + MediaStore.MediaColumns.SIZE + " > 0"
-            selectionArgs = mimeTypes.toTypedArray()
+
+            if (albumId != null) {
+                selection = "$selection AND  bucket_id=?"
+                val temp = ArrayList<String>(mimeTypes)
+                temp.add(albumId)
+                selectionArgs = temp.toTypedArray()
+            } else {
+                selectionArgs = mimeTypes.toTypedArray()
+            }
         }
+
 
         return Pair(selection, selectionArgs)
     }
