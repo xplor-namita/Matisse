@@ -18,8 +18,8 @@ android {
         minSdkVersion 23
         targetSdkVersion 35
 
-        versionCode 1
-        versionName "1.0"
+        versionCode 15
+        versionName "15.0.0"
         multiDexEnabled true
 
         // just avoid uninstall app when launch app on different machine
