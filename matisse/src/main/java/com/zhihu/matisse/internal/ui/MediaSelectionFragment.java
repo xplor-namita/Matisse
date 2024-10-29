@@ -66,6 +66,25 @@ public class MediaSelectionFragment extends Fragment implements AlbumMediaCollec
         return fragment;
     }
 
+    @SuppressLint("Range")
+    private static Uri getUri(Cursor cursor) {
+        long id = cursor.getLong(cursor.getColumnIndex(MediaStore.Files.FileColumns._ID));
+        String mimeType = cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.MIME_TYPE));
+        Uri contentUri;
+
+        if (MimeType.isImage(mimeType)) {
+            contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        } else if (MimeType.isVideo(mimeType)) {
+            contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+        } else {
+            // ?
+            contentUri = MediaStore.Files.getContentUri("external");
+        }
+
+        Uri uri = ContentUris.withAppendedId(contentUri, id);
+        return uri;
+    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -91,7 +110,7 @@ public class MediaSelectionFragment extends Fragment implements AlbumMediaCollec
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
+        mRecyclerView = view.findViewById(R.id.recyclerview);
         Album album = getArguments().getParcelable(EXTRA_ALBUM);
 
         mAdapter = new AlbumMediaAdapter(getContext(), mSelectionProvider.provideSelectedItemCollection(), mRecyclerView);
@@ -165,34 +184,15 @@ public class MediaSelectionFragment extends Fragment implements AlbumMediaCollec
     @Override
     public void onMediaClick(Album album, Item item, int adapterPosition) {
         if (mOnMediaClickListener != null) {
-            mOnMediaClickListener.onMediaClick((Album) getArguments().getParcelable(EXTRA_ALBUM), item, adapterPosition);
+            mOnMediaClickListener.onMediaClick(getArguments().getParcelable(EXTRA_ALBUM), item, adapterPosition);
         }
-    }
-
-    public interface SelectionProvider {
-        SelectedItemCollection provideSelectedItemCollection();
     }
 
     public void setLabelLoadCallback(AlbumMediaCollection.LabelLoadCallback labelLoadCallback) {
         this.mLabelLoadCallback = labelLoadCallback;
     }
 
-    @SuppressLint("Range")
-    private static Uri getUri(Cursor cursor) {
-        long id = cursor.getLong(cursor.getColumnIndex(MediaStore.Files.FileColumns._ID));
-        String mimeType = cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.MIME_TYPE));
-        Uri contentUri;
-
-        if (MimeType.isImage(mimeType)) {
-            contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-        } else if (MimeType.isVideo(mimeType)) {
-            contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
-        } else {
-            // ?
-            contentUri = MediaStore.Files.getContentUri("external");
-        }
-
-        Uri uri = ContentUris.withAppendedId(contentUri, id);
-        return uri;
+    public interface SelectionProvider {
+        SelectedItemCollection provideSelectedItemCollection();
     }
 }

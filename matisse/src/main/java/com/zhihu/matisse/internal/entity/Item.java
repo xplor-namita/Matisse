@@ -22,6 +22,7 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+
 import androidx.annotation.Nullable;
 
 import com.zhihu.matisse.MimeType;
@@ -115,16 +116,15 @@ public class Item implements Parcelable {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Item)) {
+        if (!(obj instanceof Item other)) {
             return false;
         }
 
-        Item other = (Item) obj;
         return id == other.id
                 && (mimeType != null && mimeType.equals(other.mimeType)
-                    || (mimeType == null && other.mimeType == null))
+                || (mimeType == null && other.mimeType == null))
                 && (uri != null && uri.equals(other.uri)
-                    || (uri == null && other.uri == null))
+                || (uri == null && other.uri == null))
                 && size == other.size
                 && duration == other.duration;
     }

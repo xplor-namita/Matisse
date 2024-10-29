@@ -42,10 +42,10 @@ import java.util.Set;
  */
 public class AlbumLoader extends CursorLoader {
 
-    private static final String COLUMN_BUCKET_ID = "bucket_id";
-    private static final String COLUMN_BUCKET_DISPLAY_NAME = "bucket_display_name";
     public static final String COLUMN_URI = "uri";
     public static final String COLUMN_COUNT = "count";
+    private static final String COLUMN_BUCKET_ID = "bucket_id";
+    private static final String COLUMN_BUCKET_DISPLAY_NAME = "bucket_display_name";
     private static final Uri QUERY_URI = MediaStore.Files.getContentUri("external");
 
     private static final String[] COLUMNS = {
@@ -95,23 +95,17 @@ public class AlbumLoader extends CursorLoader {
     private static final String SELECTION_FOR_SINGLE_MEDIA_TYPE_29 =
             MediaStore.Files.FileColumns.MEDIA_TYPE + "=?"
                     + " AND " + MediaStore.MediaColumns.SIZE + ">0";
-
-    private static String[] getSelectionArgsForSingleMediaType(int mediaType) {
-        return new String[]{String.valueOf(mediaType)};
-    }
-    // =============================================
-
     // === params for showSingleMediaType: true ===
     private static final String SELECTION_FOR_SINGLE_MEDIA_GIF_TYPE =
             MediaStore.Files.FileColumns.MEDIA_TYPE + "=?"
                     + " AND " + MediaStore.MediaColumns.SIZE + ">0"
                     + " AND " + MediaStore.MediaColumns.MIME_TYPE + "=?"
                     + ") GROUP BY (bucket_id";
+    // =============================================
     private static final String SELECTION_FOR_SINGLE_MEDIA_GIF_TYPE_29 =
             MediaStore.Files.FileColumns.MEDIA_TYPE + "=?"
                     + " AND " + MediaStore.MediaColumns.SIZE + ">0"
                     + " AND " + MediaStore.MediaColumns.MIME_TYPE + "=?";
-
     // === params for showSingleMediaType: true ===
     private static final String SELECTION_FOR_SINGLE_MEDIA_NO_GIF_TYPE =
             MediaStore.Files.FileColumns.MEDIA_TYPE + "=?"
@@ -122,16 +116,6 @@ public class AlbumLoader extends CursorLoader {
             MediaStore.Files.FileColumns.MEDIA_TYPE + "=?"
                     + " AND " + MediaStore.MediaColumns.SIZE + ">0"
                     + " AND " + MediaStore.MediaColumns.MIME_TYPE + " IN (?,?,?,?) ";
-
-    private static String[] getSelectionArgsForSingleMediaGifType(int mediaType) {
-        return new String[]{String.valueOf(mediaType), "image/gif"};
-    }
-
-    private static String[] getSelectionArgsForSingleMediaNoGifType(int mediaType) {
-        return new String[]{String.valueOf(mediaType),"image/png", "image/jpeg", "image/x-ms-bmp", "image/webp"};
-    }
-    // =============================================
-
     private static final String BUCKET_ORDER_BY = MediaStore.Images.Media.DATE_ADDED + " DESC";
 
     private AlbumLoader(Context context, String selection, String[] selectionArgs) {
@@ -143,6 +127,19 @@ public class AlbumLoader extends CursorLoader {
                 selectionArgs,
                 BUCKET_ORDER_BY
         );
+    }
+
+    private static String[] getSelectionArgsForSingleMediaType(int mediaType) {
+        return new String[]{String.valueOf(mediaType)};
+    }
+    // =============================================
+
+    private static String[] getSelectionArgsForSingleMediaGifType(int mediaType) {
+        return new String[]{String.valueOf(mediaType), "image/gif"};
+    }
+
+    private static String[] getSelectionArgsForSingleMediaNoGifType(int mediaType) {
+        return new String[]{String.valueOf(mediaType), "image/png", "image/jpeg", "image/x-ms-bmp", "image/webp"};
     }
 
     public static CursorLoader newInstance(Context context) {
@@ -172,6 +169,32 @@ public class AlbumLoader extends CursorLoader {
             selectionArgs = SELECTION_ARGS;
         }
         return new AlbumLoader(context, selection, selectionArgs);
+    }
+
+    private static Uri getUri(Cursor cursor) {
+        long id = cursor.getLong(cursor.getColumnIndex(MediaStore.Files.FileColumns._ID));
+        String mimeType = cursor.getString(
+                cursor.getColumnIndex(MediaStore.MediaColumns.MIME_TYPE));
+        Uri contentUri;
+
+        if (MimeType.isImage(mimeType)) {
+            contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        } else if (MimeType.isVideo(mimeType)) {
+            contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+        } else {
+            // ?
+            contentUri = MediaStore.Files.getContentUri("external");
+        }
+
+        Uri uri = ContentUris.withAppendedId(contentUri, id);
+        return uri;
+    }
+
+    /**
+     * @return 是否是 Android 10 （Q） 之前的版本
+     */
+    private static boolean beforeAndroidTen() {
+        return android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.Q;
     }
 
     @Override
@@ -282,34 +305,8 @@ public class AlbumLoader extends CursorLoader {
         }
     }
 
-    private static Uri getUri(Cursor cursor) {
-        long id = cursor.getLong(cursor.getColumnIndex(MediaStore.Files.FileColumns._ID));
-        String mimeType = cursor.getString(
-                cursor.getColumnIndex(MediaStore.MediaColumns.MIME_TYPE));
-        Uri contentUri;
-
-        if (MimeType.isImage(mimeType)) {
-            contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-        } else if (MimeType.isVideo(mimeType)) {
-            contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
-        } else {
-            // ?
-            contentUri = MediaStore.Files.getContentUri("external");
-        }
-
-        Uri uri = ContentUris.withAppendedId(contentUri, id);
-        return uri;
-    }
-
     @Override
     public void onContentChanged() {
         // FIXME a dirty way to fix loading multiple times
-    }
-
-    /**
-     * @return 是否是 Android 10 （Q） 之前的版本
-     */
-    private static boolean beforeAndroidTen() {
-        return android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.Q;
     }
 }

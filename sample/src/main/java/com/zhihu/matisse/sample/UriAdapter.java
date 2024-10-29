@@ -51,14 +51,14 @@ public class UriAdapter extends RecyclerView.Adapter<UriAdapter.UriViewHolder> {
 
     static class UriViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView mUri;
-        private TextView mPath;
-        private ImageView mImageView;
+        private final TextView mUri;
+        private final TextView mPath;
+        private final ImageView mImageView;
 
         UriViewHolder(View contentView) {
             super(contentView);
-            mUri = (TextView) contentView.findViewById(R.id.uri);
-            mPath = (TextView) contentView.findViewById(R.id.path);
+            mUri = contentView.findViewById(R.id.uri);
+            mPath = contentView.findViewById(R.id.path);
             mImageView = contentView.findViewById(R.id.image);
         }
     }

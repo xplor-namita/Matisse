@@ -16,6 +16,23 @@
  */
 package com.zhihu.matisse;
 
+import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_BEHIND;
+import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR;
+import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_FULL_USER;
+import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LOCKED;
+import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_NOSENSOR;
+import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE;
+import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT;
+import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR;
+import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE;
+import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT;
+import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
+import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_USER;
+import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE;
+import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
@@ -40,23 +57,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.Set;
 
-import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_BEHIND;
-import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR;
-import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_FULL_USER;
-import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
-import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LOCKED;
-import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_NOSENSOR;
-import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
-import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE;
-import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT;
-import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR;
-import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE;
-import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT;
-import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
-import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_USER;
-import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE;
-import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT;
-
 /**
  * Fluent API for building media select specification.
  */
@@ -64,29 +64,6 @@ import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT;
 public final class SelectionCreator {
     private final Matisse mMatisse;
     private final SelectionSpec mSelectionSpec;
-
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-    @IntDef({
-            SCREEN_ORIENTATION_UNSPECIFIED,
-            SCREEN_ORIENTATION_LANDSCAPE,
-            SCREEN_ORIENTATION_PORTRAIT,
-            SCREEN_ORIENTATION_USER,
-            SCREEN_ORIENTATION_BEHIND,
-            SCREEN_ORIENTATION_SENSOR,
-            SCREEN_ORIENTATION_NOSENSOR,
-            SCREEN_ORIENTATION_SENSOR_LANDSCAPE,
-            SCREEN_ORIENTATION_SENSOR_PORTRAIT,
-            SCREEN_ORIENTATION_REVERSE_LANDSCAPE,
-            SCREEN_ORIENTATION_REVERSE_PORTRAIT,
-            SCREEN_ORIENTATION_FULL_SENSOR,
-            SCREEN_ORIENTATION_USER_LANDSCAPE,
-            SCREEN_ORIENTATION_USER_PORTRAIT,
-            SCREEN_ORIENTATION_FULL_USER,
-            SCREEN_ORIENTATION_LOCKED
-    })
-    @Retention(RetentionPolicy.SOURCE)
-    @interface ScreenOrientation {
-    }
 
     /**
      * Constructs a new specification builder on the context.
@@ -213,7 +190,6 @@ public final class SelectionCreator {
         mSelectionSpec.originalable = enable;
         return this;
     }
-
 
     /**
      * Determines Whether to hide top and bottom toolbar in PreView mode ,when user tap the picture
@@ -384,5 +360,28 @@ public final class SelectionCreator {
     public SelectionCreator showPreview(boolean showPreview) {
         mSelectionSpec.showPreview = showPreview;
         return this;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
+    @IntDef({
+            SCREEN_ORIENTATION_UNSPECIFIED,
+            SCREEN_ORIENTATION_LANDSCAPE,
+            SCREEN_ORIENTATION_PORTRAIT,
+            SCREEN_ORIENTATION_USER,
+            SCREEN_ORIENTATION_BEHIND,
+            SCREEN_ORIENTATION_SENSOR,
+            SCREEN_ORIENTATION_NOSENSOR,
+            SCREEN_ORIENTATION_SENSOR_LANDSCAPE,
+            SCREEN_ORIENTATION_SENSOR_PORTRAIT,
+            SCREEN_ORIENTATION_REVERSE_LANDSCAPE,
+            SCREEN_ORIENTATION_REVERSE_PORTRAIT,
+            SCREEN_ORIENTATION_FULL_SENSOR,
+            SCREEN_ORIENTATION_USER_LANDSCAPE,
+            SCREEN_ORIENTATION_USER_PORTRAIT,
+            SCREEN_ORIENTATION_FULL_USER,
+            SCREEN_ORIENTATION_LOCKED
+    })
+    @Retention(RetentionPolicy.SOURCE)
+    @interface ScreenOrientation {
     }
 }

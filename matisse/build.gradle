@@ -18,39 +18,42 @@ apply plugin: 'checkstyle'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdk 34
+    namespace 'com.zhihu.matisse'
+    compileSdk 35
 
     defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 34
+        minSdkVersion 23
+        targetSdkVersion 35
+        multiDexEnabled true
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
+
     lint {
         abortOnError false
     }
-    namespace 'com.zhihu.matisse'
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation "androidx.appcompat:appcompat:1.6.1"
-    implementation "androidx.annotation:annotation:1.7.0"
+    implementation "androidx.appcompat:appcompat:1.7.0"
+    implementation "androidx.annotation:annotation:1.9.0"
     implementation "androidx.recyclerview:recyclerview:1.3.2"
     implementation 'it.sephiroth.android.library.imagezoom:library:1.0.4'
 
-    implementation 'com.github.bumptech.glide:glide:4.15.1'
+    implementation 'com.github.bumptech.glide:glide:4.16.0'
     implementation 'com.squareup.picasso:picasso:2.71828'
-    implementation "com.google.android.material:material:1.10.0"
+    implementation "com.google.android.material:material:1.12.0"
+    implementation "androidx.multidex:multidex:2.0.1"
 }
 
-task javadoc(type: Javadoc) {
+tasks.register('javadoc', Javadoc) {
     options.encoding = "utf-8"
 }
 
@@ -58,12 +61,12 @@ checkstyle {
     toolVersion = '7.6.1'
 }
 
-tasks.withType(Javadoc) {
+tasks.withType(Javadoc).configureEach {
     options.addStringOption('Xdoclint:none', '-quiet')
     options.addStringOption('encoding', 'UTF-8')
 }
 
-task checkstyle(type:Checkstyle) {
+tasks.register('checkstyle', Checkstyle) {
     description 'Runs Checkstyle inspection against matisse sourcesets.'
     group = 'Code Quality'
     configFile rootProject.file('checkstyle.xml')
@@ -72,5 +75,4 @@ task checkstyle(type:Checkstyle) {
     classpath = files()
     source 'src/main/java'
 }
-
 apply from: file("publish.gradle")

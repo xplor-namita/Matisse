@@ -21,10 +21,20 @@ object LoaderHelper {
 
     @JvmStatic
     private fun loadNoAnimImagesHolder(albumId: String?): Pair<String, Array<String>> {
-        return buildSelectionAndArgs(listOf("image/png", "image/jpeg", "image/x-ms-bmp", "image/webp"), albumId)
+        return buildSelectionAndArgs(
+            listOf(
+                "image/png",
+                "image/jpeg",
+                "image/x-ms-bmp",
+                "image/webp"
+            ), albumId
+        )
     }
 
-    private fun buildSelectionAndArgs(mimeTypes: List<String>, albumId: String?): Pair<String, Array<String>> {
+    private fun buildSelectionAndArgs(
+        mimeTypes: List<String>,
+        albumId: String?
+    ): Pair<String, Array<String>> {
         var selection: String
         val selectionArgs: Array<String>
 

@@ -17,13 +17,14 @@ package com.zhihu.matisse.internal.ui.widget;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.zhihu.matisse.R;
 import com.zhihu.matisse.internal.entity.Item;
@@ -54,10 +55,10 @@ public class MediaGrid extends SquareFrameLayout implements View.OnClickListener
     private void init(Context context) {
         LayoutInflater.from(context).inflate(R.layout.media_grid_content, this, true);
 
-        mThumbnail = (ImageView) findViewById(R.id.media_thumbnail);
-        mCheckView = (CheckView) findViewById(R.id.check_view);
-        mGifTag = (ImageView) findViewById(R.id.gif);
-        mVideoDuration = (TextView) findViewById(R.id.video_duration);
+        mThumbnail = findViewById(R.id.media_thumbnail);
+        mCheckView = findViewById(R.id.check_view);
+        mGifTag = findViewById(R.id.gif);
+        mVideoDuration = findViewById(R.id.video_duration);
 
         mThumbnail.setOnClickListener(this);
         mCheckView.setOnClickListener(this);

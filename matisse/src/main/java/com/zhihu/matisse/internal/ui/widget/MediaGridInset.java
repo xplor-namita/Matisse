@@ -16,14 +16,15 @@
 package com.zhihu.matisse.internal.ui.widget;
 
 import android.graphics.Rect;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 public class MediaGridInset extends RecyclerView.ItemDecoration {
 
-    private int mSpanCount;
-    private int mSpacing;
-    private boolean mIncludeEdge;
+    private final int mSpanCount;
+    private final int mSpacing;
+    private final boolean mIncludeEdge;
 
     public MediaGridInset(int spanCount, int spacing, boolean includeEdge) {
         this.mSpanCount = spanCount;

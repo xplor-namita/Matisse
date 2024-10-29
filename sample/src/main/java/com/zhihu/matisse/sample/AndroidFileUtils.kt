@@ -12,7 +12,7 @@ import android.provider.MediaStore
 
 
 object AndroidFileUtils {
-   // content://media/picker/0/com.android.providers.media.photopicker/media/1000033208
+    // content://media/picker/0/com.android.providers.media.photopicker/media/1000033208
 
 
     fun getFilePathByUri(context: Context, uri: Uri?): String? {
@@ -28,10 +28,17 @@ object AndroidFileUtils {
         // 以 content:// 开头的，比如 content://media/extenral/images/media/17766
         if (ContentResolver.SCHEME_CONTENT == uri.scheme && Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             val cursor: Cursor? =
-                context.contentResolver.query(uri, arrayOf(MediaStore.Images.Media.DATA), null, null, null)
+                context.contentResolver.query(
+                    uri,
+                    arrayOf(MediaStore.Images.Media.DATA),
+                    null,
+                    null,
+                    null
+                )
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
-                    val columnIndex: Int = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+                    val columnIndex: Int =
+                        cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
                     if (columnIndex > -1) {
                         path = cursor.getString(columnIndex)
                     }
@@ -46,24 +53,28 @@ object AndroidFileUtils {
                 if (isExternalStorageDocument(uri)) {
                     // ExternalStorageProvider
                     val docId = DocumentsContract.getDocumentId(uri)
-                    val split = docId.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                    val split =
+                        docId.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
                     val type = split[0]
                     if ("primary".equals(type, ignoreCase = true)) {
-                        path = Environment.getExternalStorageDirectory().absolutePath + "/" + split[1]
+                        path =
+                            Environment.getExternalStorageDirectory().absolutePath + "/" + split[1]
                         return path
                     }
                 } else if (isDownloadsDocument(uri)) {
                     // DownloadsProvider
                     val id = DocumentsContract.getDocumentId(uri)
                     val contentUri: Uri = ContentUris.withAppendedId(
-                        Uri.parse("content://downloads/public_downloads"), java.lang.Long.valueOf(id)
+                        Uri.parse("content://downloads/public_downloads"),
+                        java.lang.Long.valueOf(id)
                     )
                     path = getDataColumn(context, contentUri, null, null)
                     return path
                 } else if (isMediaDocument(uri)) {
                     // MediaProvider
                     val docId = DocumentsContract.getDocumentId(uri)
-                    val split = docId.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+                    val split =
+                        docId.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
                     val type = split[0]
                     var contentUri: Uri? = null
                     if ("image" == type) {
@@ -83,13 +94,19 @@ object AndroidFileUtils {
         return null
     }
 
-    private fun getDataColumn(context: Context, uri: Uri?, selection: String?, selectionArgs: Array<String>?): String? {
+    private fun getDataColumn(
+        context: Context,
+        uri: Uri?,
+        selection: String?,
+        selectionArgs: Array<String>?
+    ): String? {
         var cursor: Cursor? = null
         val column = "_data"
         val projection = arrayOf(column)
         try {
             uri?.let {
-                cursor = context.contentResolver.query(uri, projection, selection, selectionArgs, null)
+                cursor =
+                    context.contentResolver.query(uri, projection, selection, selectionArgs, null)
                 cursor?.let {
                     if (it.moveToFirst()) {
                         val columnIndex: Int = it.getColumnIndexOrThrow(column)

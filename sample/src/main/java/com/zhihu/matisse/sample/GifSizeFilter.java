@@ -29,9 +29,9 @@ import java.util.Set;
 
 class GifSizeFilter extends Filter {
 
-    private int mMinWidth;
-    private int mMinHeight;
-    private int mMaxSize;
+    private final int mMinWidth;
+    private final int mMinHeight;
+    private final int mMaxSize;
 
     GifSizeFilter(int minWidth, int minHeight, int maxSizeInBytes) {
         mMinWidth = minWidth;
