@@ -57,6 +57,7 @@ public final class SelectionSpec {
     public int originalMaxSize;
     public OnCheckedListener onCheckedListener;
     public boolean showPreview;
+    public boolean disableEdgeToEdge = false;
 
     private SelectionSpec() {
     }

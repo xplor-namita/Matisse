@@ -320,6 +320,14 @@ public final class SelectionCreator {
         mSelectionSpec.onCheckedListener = listener;
         return this;
     }
+    /** Only for android 15
+     *
+     * Disables Edge to edge disable for activity
+     * **/
+    public SelectionCreator disableEdgeToEdgeDisplay(boolean disable) {
+        mSelectionSpec.disableEdgeToEdge = disable;
+        return this;
+    }
 
     /**
      * Start to select media and wait for result.
